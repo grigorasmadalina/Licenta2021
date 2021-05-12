@@ -1,11 +1,22 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+const express = require('express');
+const { route } = require('./routes');
 const app = express();
-app.use(bodyParser.json());
+const routes = require('./routes');
+const mongoose = require ('mongoose');
+require('dotenv').config()
 
-let port = 8081;
-app.get("/", (req, res) => res.send({ message: "Server is running" }));
+const port=8000;
 
-app.listen(port, () => {
-  console.log('Server is running on' + port);
-});
+mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connection.once("open", () => {
+    console.log("MongoDB connected!")
+})
+
+
+app.use(express.json())
+
+app.use('/api', routes)
+
+
+
+app.listen(port, () => console.log('Server is running on' + port));
